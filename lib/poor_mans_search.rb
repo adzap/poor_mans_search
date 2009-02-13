@@ -45,6 +45,7 @@ module YFactorial
         extend YFactorial::PoorMansSearch::SingletonMethods
         
       end
+      alias :search_on :poor_mans_search_on
     end
     
     module SingletonMethods
