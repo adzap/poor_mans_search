@@ -1,0 +1,51 @@
+= Poor Man's Search Rails Plugin
+
+Home: https://yfactorial.devguard.com/trac/commons/wiki/PoorMansSearch
+
+<tt>poor_mans_search</tt> is a mixin for ActiveRecord that provides basic searching on model records utilzing
+sql search querying.  This mixin merely provides automated building of SQL search queries, it is up to you
+to ensure that the queried columns are properly indexed and/or have the appropriate support on your database.
+
+For database independent search functionality, please see acts_as_ferret and acts_as_searchable, among others.  Also, please make a conscious decision that db text searching is what you really want - read this blog entry
+for a good db vs. ferret comparison:
+
+  http://blog.zmok.net/articles/2006/08/14/full-text-search-in-ruby-on-rails
+
+The core of this plugin is based on the <tt>find_by_keyword</tt> functionality originally conceived by
+Gleb Arshinov (http://wiki.rubyonrails.org/rails/pages/FullTextSearch) and reproduced here: http://www.rorpaste.com/paste/details/583
+
+== Installation
+
+Install this plugin to your rails project with:
+
+<tt>svn co https://yfactorial.devguard.com/svn/commons/plugins/poor_mans_search/trunk vendor/plugins/poor_mans_search</tt>
+
+or better yet:
+
+<tt>piston import https://yfactorial.devguard.com/svn/commons/plugins/poor_mans_search/trunk vendor/plugins/poor_mans_search</tt>
+
+== Usage
+
+Include the <tt>poor_mans_search_on</tt> declaration within any model class that you wish to be searchable.  For
+instance, assume a <tt>Post</tt> model:
+
+  class Post < ActiveRecord::Base
+	  poor_mans_search_on :title, :body
+	end
+	
+This gives you the <tt>search_for</tt> class method on <tt>Post</tt> that takes a list of search terms and
+any other standard find options:
+
+	# Get the first 20 posts within the last year that contain the word <tt>test</tt>
+	#
+	# Equivalent to the following query:
+	#
+	#   SELECT * FROM posts WHERE
+	#     ((published_at > '2006-08-02 14:29:17') AND
+	#      (lower(posts.title) like '%test%' OR lower(posts.body) like '%test%'))
+	#     ORDER BY published_at DESC LIMIT 20
+	#
+  Post.search_for('TEst', :conditions => ["published_at > ?", (Time.now - 1.year)],
+													:limit => 20, :order => 'published_at DESC')
+													
+See <tt>poor_mans_search_on</tt> for further documentation
