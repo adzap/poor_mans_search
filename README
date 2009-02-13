@@ -1,6 +1,6 @@
 = Poor Man's Search Rails Plugin
 
-Home: https://yfactorial.devguard.com/trac/commons/wiki/PoorMansSearch
+Home: http://github.com/adzap/poor_mans_search (original links are dead)
 
 <tt>poor_mans_search</tt> is a mixin for ActiveRecord that provides basic searching on model records utilzing
 sql search querying.  This mixin merely provides automated building of SQL search queries, it is up to you
@@ -18,11 +18,7 @@ Gleb Arshinov (http://wiki.rubyonrails.org/rails/pages/FullTextSearch) and repro
 
 Install this plugin to your rails project with:
 
-<tt>svn co https://yfactorial.devguard.com/svn/commons/plugins/poor_mans_search/trunk vendor/plugins/poor_mans_search</tt>
-
-or better yet:
-
-<tt>piston import https://yfactorial.devguard.com/svn/commons/plugins/poor_mans_search/trunk vendor/plugins/poor_mans_search</tt>
+<tt>script/plugin install git://github.com/adzap/poor_mans_search.git</tt>
 
 == Usage
 
