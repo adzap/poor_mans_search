@@ -92,17 +92,17 @@ module YFactorial
       # the given search keywords.
       #
       #   class Article < ActiveRecord::Base
-      #     sql_searchable_on :title, :body, :search_associated => [:comments, :tags]
+      #     poor_mans_search_on :title, :body, :search_associated => [:comments, :tags]
       #     has_many :comments
       #     has_and_belongs_to_many :tags, :through => :taggings
       #   end
       #
       #   class Comment < ActiveRecord::Base
-      #     sql_searchable_on :body
+      #     poor_mans_search_on :body
       #   end
       #
       #   class Tag < ActiveRecord::Base
-      #     sql_searchable_on :name
+      #     poor_mans_search_on :name
       #   end
       #
       #   Article.build_ids_for_matching_included_models_sql(['keyword1'], :comments)
@@ -120,12 +120,12 @@ module YFactorial
       # matches the given search keywords.
       #
       #   class Article < ActiveRecord::Base
-      #     sql_searchable_on :title, :body, :search_associated => [:comments]
+      #     poor_mans_search_on :title, :body, :search_associated => [:comments]
       #     has_many :comments
       #   end
       #
       #   class Comment < ActiveRecord::Base
-      #     sql_searchable_on :body
+      #     poor_mans_search_on :body
       #   end
       #
       #   Article.build_ids_for_matching_included_model_sql(['keyword1'], :comments)
@@ -137,7 +137,8 @@ module YFactorial
         
         ass_reflection = self.mirror.association[include_model]
 
-        "SELECT #{ass_reflection.queryable_table}.#{ass_reflection.source_id_column} FROM \
+        id_column_for_select = ass_reflection.type == :belongs_to ? ass_reflection.target_id_column : ass_reflection.source_id_column
+        "SELECT #{ass_reflection.queryable_table}.#{id_column_for_select} FROM \
          #{ass_reflection.queryable_table} WHERE \
          (#{ass_reflection.queryable_table}.#{ass_reflection.target_id_column} in (#{build_matching_included_model_ids_sql(ass_reflection, keywords)}))"
       end
@@ -146,12 +147,12 @@ module YFactorial
       # keywords.
       #
       #   class Article < ActiveRecord::Base
-      #     sql_searchable_on :title, :body, :search_associated => [:comments]
+      #     poor_mans_search_on :title, :body, :search_associated => [:comments]
       #     has_many :comments
       #   end
       #
       #   class Comment < ActiveRecord::Base
-      #     sql_searchable_on :body
+      #     poor_mans_search_on :body
       #   end
       #
       #   Article.build_matching_included_model_ids_sql(Article.mirror.association[:comments], ['keyword1'])
