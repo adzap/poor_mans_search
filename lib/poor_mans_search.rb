@@ -74,7 +74,8 @@ module YFactorial
         # Get the search query on this model for the keywords
         search_query = sql_searchable_fields.collect do |col|
           keywords.flatten.collect do |keyword|
-            sanitize_sql_array(["lower(#{table_name}.#{col}) like '%s'", "%#{keyword.downcase}%"])
+            column = col.is_a?(Symbol) ? "#{table_name}.#{col}" : col
+            sanitize_sql_array(["lower(#{column}) like '%s'", "%#{keyword.downcase}%"])
           end.join(" OR ")
         end.join(" OR ")
         
